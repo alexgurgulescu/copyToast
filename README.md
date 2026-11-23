@@ -64,6 +64,7 @@ Look for the toast icon in your menu bar. Install the app in Applications before
 ```bash
 swift test                    # Run the tests
 ./scripts/build.sh            # Build and sign build/copyToast.app
+./scripts/make-dmg.sh         # Build a universal, ad hoc signed DMG
 swift scripts/make-icon.swift # Regenerate the app icon
 ```
 
