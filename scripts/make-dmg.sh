@@ -9,7 +9,8 @@ cd "${0:A:h}/.."
 # The name stays the same across versions so the README download link keeps working.
 dmg="build/copyToast.dmg"
 volume="/Volumes/copyToast"
-work="$(mktemp -d)"
+# Finder records this path in the DMG's layout, so avoid the per-user temp folder.
+work="$(mktemp -d /private/tmp/copyToast.XXXXXX)"
 cleanup() {
     [[ -d "$volume" ]] && hdiutil detach -quiet "$volume" || true
     rm -rf "$work"
