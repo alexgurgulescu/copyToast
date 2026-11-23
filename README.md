@@ -72,3 +72,5 @@ A manual test checklist is in [TESTING.md](TESTING.md).
 ## License
 
 copyToast is free for private and commercial use under the [MIT License](LICENSE). Please keep the copyright and license notice in copies of the software.
+
+The coffee icon is from [Lucide](https://lucide.dev), under the ISC License. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

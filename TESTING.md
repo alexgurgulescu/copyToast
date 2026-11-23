@@ -41,4 +41,5 @@ Run `swift test` first, then check these in the built app.
 - [ ] Pause dims the menu bar icon and stops toasts
 - [ ] Launch at Login works when the app is in Applications
 - [ ] About shows the icon, name, and version
+- [ ] Buy me a coffee in About opens the support page in the default browser
 - [ ] Quit closes the app

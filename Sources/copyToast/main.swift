@@ -90,12 +90,34 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc private func showAbout() {
         NSApp.activate()
-        NSApp.orderFrontStandardAboutPanel(options: [
-            .credits: NSAttributedString(
-                string: "Confirms what you copy in Finder.",
-                attributes: [.font: NSFont.systemFont(ofSize: 11), .foregroundColor: NSColor.secondaryLabelColor]
-            ),
-        ])
+        NSApp.orderFrontStandardAboutPanel(options: [.credits: aboutCredits()])
+    }
+
+    private func aboutCredits() -> NSAttributedString {
+        let font = NSFont.systemFont(ofSize: 11)
+        let centered = NSMutableParagraphStyle()
+        centered.alignment = .center
+        centered.paragraphSpacing = 6
+
+        let credits = NSMutableAttributedString(
+            string: "A tiny toast when you copy files, folders, or paths in Finder.\n",
+            attributes: [.font: font, .foregroundColor: NSColor.secondaryLabelColor, .paragraphStyle: centered]
+        )
+
+        let link = NSMutableAttributedString()
+        let iconSize: CGFloat = 13
+        let attachment = NSTextAttachment()
+        attachment.image = CoffeeGlyph.image(size: iconSize, color: .linkColor)
+        attachment.bounds = CGRect(x: 0, y: (font.capHeight - iconSize) / 2, width: iconSize, height: iconSize)
+        link.append(NSAttributedString(attachment: attachment))
+        link.append(NSAttributedString(string: " Buy me a coffee"))
+        link.addAttributes([
+            .font: font,
+            .link: URL(string: "https://buymeacoffee.com/alexgurgulescu")!,
+            .paragraphStyle: centered,
+        ], range: NSRange(location: 0, length: link.length))
+        credits.append(link)
+        return credits
     }
 
     @objc private func quit() {

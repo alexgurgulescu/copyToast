@@ -19,6 +19,7 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$bin_dir/copyToast" "$app/Contents/MacOS/copyToast"
 cp Config/Info.plist "$app/Contents/Info.plist"
 cp Config/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
+cp THIRD_PARTY_NOTICES.md "$app/Contents/Resources/THIRD_PARTY_NOTICES.md"
 
 codesign --force --options runtime --timestamp=none \
     --entitlements Config/copyToast.entitlements \
