@@ -1,0 +1,76 @@
+name: Build draft release
+
+# Run manually from main. It creates a draft, which is reviewed before publishing.
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  release:
+    name: Build, verify and attest
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-26
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Read version
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Config/Info.plist)"
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid version: $version"; exit 1; }
+          if gh release view "$version" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $version already exists."
+            exit 1
+          fi
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Run tests
+        run: swift test
+
+      - name: Build DMG
+        run: ./scripts/make-dmg.sh
+
+      - name: Verify DMG
+        run: |
+          mount="$(mktemp -d)"
+          hdiutil attach -quiet -readonly -nobrowse -mountpoint "$mount" build/copyToast.dmg
+          trap 'hdiutil detach -quiet "$mount"' EXIT
+          app="$mount/copyToast.app"
+          codesign --verify --strict "$app"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app/Contents/Info.plist")" == "$VERSION" ]]
+          lipo "$app/Contents/MacOS/copyToast" -verify_arch arm64 x86_64
+          entitlements="$(codesign -d --entitlements - --xml "$app" 2>/dev/null | plutil -convert json -o - -)"
+          [[ "$entitlements" == '{"com.apple.security.app-sandbox":true}' ]] || { echo "Unexpected entitlements: $entitlements"; exit 1; }
+
+      - name: Create checksum
+        working-directory: build
+        run: shasum -a 256 copyToast.dmg > copyToast.dmg.sha256
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: build/copyToast.dmg
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$VERSION" build/copyToast.dmg build/copyToast.dmg.sha256 \
+            --repo "$GITHUB_REPOSITORY" \
+            --draft \
+            --target "$GITHUB_SHA" \
+            --title "copyToast $VERSION" \
+            --notes "Built from this repository by GitHub Actions, with a build attestation and SHA-256 checksum. See SECURITY.md to verify your download.
+
+          copyToast is not notarized by Apple. On first launch, go to System Settings > Privacy & Security and choose Open Anyway. Only do this for a copy downloaded from this repository."

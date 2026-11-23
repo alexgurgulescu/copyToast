@@ -40,6 +40,8 @@ Look for the toast icon in your menu bar. If macOS asks whether copyToast can pa
 
 **Why the extra step?** copyToast is a free project and isn't notarized by Apple, which requires a paid developer membership. The full source code is here, and the app has no network access.
 
+**Download it only from this repository.** Because macOS can't verify copyToast for you, avoid copies hosted anywhere else. See [SECURITY.md](SECURITY.md) to verify a download or report a problem.
+
 ## What it shows
 
 | You copy | Toast |
