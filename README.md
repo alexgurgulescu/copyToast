@@ -1,8 +1,44 @@
-# copyToast
+<p align="center">
+  <img src="docs/images/icon.png" width="112" alt="copyToast icon">
+</p>
 
-A tiny macOS menu bar app that confirms what you just copied in Finder with a short, unobtrusive toast.
+<h1 align="center">copyToast</h1>
+
+<p align="center">
+  A tiny toast when you copy files, folders, or paths in Finder.
+</p>
+
+<p align="center">
+  <a href="https://github.com/alexgurgulescu/copyToast/releases/latest/download/copyToast.dmg">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="docs/images/download-dark.png">
+      <img src="docs/images/download-light.png" width="232" alt="Download copyToast for Mac">
+    </picture>
+  </a>
+</p>
+
+<p align="center">
+  Free and open source · macOS 15.4 or later · Apple Silicon and Intel
+</p>
+
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/toast-dark.png">
+    <img src="docs/images/toast-light.png" width="154" alt="A small toast that says 3 files copied">
+  </picture>
+</p>
 
 Finder gives no feedback when you press ⌘C. copyToast shows a small message such as **3 files copied**, then gets out of your way.
+
+## Install
+
+1. [Download copyToast](https://github.com/alexgurgulescu/copyToast/releases/latest/download/copyToast.dmg), open it, and drag copyToast to Applications.
+2. Open copyToast from Applications. macOS will block it the first time.
+3. Go to **System Settings → Privacy & Security**, scroll down, click **Open Anyway**, and confirm.
+
+Look for the toast icon in your menu bar. If macOS asks whether copyToast can paste from other apps, choose **Allow** so it can count what you copied.
+
+**Why the extra step?** copyToast is a free project and isn't notarized by Apple, which requires a paid developer membership. The full source code is here, and the app has no network access.
 
 ## What it shows
 
@@ -39,15 +75,17 @@ copyToast is designed to know as little as possible:
 - **Skips sensitive copies.** Items that password managers mark as concealed are ignored.
 - **No third-party dependencies.**
 
-macOS may ask whether copyToast can paste from other apps. Choose **Allow** so it can count what you copied.
+## Support
 
-## Requirements
+copyToast is free. If it's useful to you, you can [buy me a coffee](https://buymeacoffee.com/alexgurgulescu).
 
-- macOS 15.4 or later
-- Xcode 16 or later, to build from source
-- A free Apple Development certificate, which you can create in Xcode under Settings → Apple Accounts → Manage Certificates
+## Known limitations
 
-## Build and install
+- A single copied path that goes through a folder whose name ends in a space may be counted as more than one path.
+
+## Build from source
+
+You need macOS 15.4 or later, Xcode 16 or later, and a free Apple Development certificate, which you can create in Xcode under Settings → Apple Accounts → Manage Certificates.
 
 ```bash
 git clone https://github.com/alexgurgulescu/copyToast.git
@@ -57,13 +95,14 @@ cp -R build/copyToast.app /Applications/
 open /Applications/copyToast.app
 ```
 
-Look for the toast icon in your menu bar. Install the app in Applications before turning on **Launch at Login**.
+Install the app in Applications before turning on **Launch at Login**.
 
-## Development
+### Development
 
 ```bash
 swift test                    # Run the tests
 ./scripts/build.sh            # Build and sign build/copyToast.app
+./scripts/make-dmg.sh         # Build a universal, ad hoc signed DMG
 swift scripts/make-icon.swift # Regenerate the app icon
 ```
 
