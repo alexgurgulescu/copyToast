@@ -10,6 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     private var statusItem: NSStatusItem?
     private var timer: Timer?
     private var isPaused = false
+    private var finderWasFrontmost = false
 
     private let pauseItem = NSMenuItem(title: "Pause", action: #selector(togglePause), keyEquivalent: "")
     private let loginItem = NSMenuItem(title: "Launch at Login", action: #selector(toggleLaunchAtLogin), keyEquivalent: "")
@@ -126,18 +127,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     // MARK: Clipboard
 
+    private var isFinderFrontmost: Bool {
+        NSWorkspace.shared.frontmostApplication?.bundleIdentifier == "com.apple.finder"
+    }
+
     private func startWatching() {
-        timer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in
+        finderWasFrontmost = isFinderFrontmost
+        let timer = Timer(timeInterval: 0.2, repeats: true) { [weak self] _ in
             MainActor.assumeIsolated { self?.poll() }
         }
+        // Common modes keep the check running while the menu is open.
+        RunLoop.main.add(timer, forMode: .common)
+        self.timer = timer
     }
 
     private func poll() {
+        // Finder must be frontmost on both sides of the change, so a copy made
+        // in another app just before switching to Finder is not inspected.
+        let finderIsFrontmost = isFinderFrontmost
+        let finderHeldFocus = finderWasFrontmost && finderIsFrontmost
+        finderWasFrontmost = finderIsFrontmost
+
         let changeCount = pasteboard.changeCount
         guard changeCount != lastChangeCount else { return }
         lastChangeCount = changeCount
 
-        guard NSWorkspace.shared.frontmostApplication?.bundleIdentifier == "com.apple.finder" else { return }
+        guard finderHeldFocus else { return }
 
         if let toast = Toast(for: ClipboardInspector.inspect(pasteboard)) {
             toasts.show(toast)

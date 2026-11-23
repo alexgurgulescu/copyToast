@@ -19,12 +19,13 @@ public final class ToastController {
     }
 
     public func show(_ toast: Toast) {
-        generation += 1
-        hideTask?.cancel()
-
         hostingView.rootView = ToastView(toast: toast)
         hostingView.layoutSubtreeIfNeeded()
+        // Without a display, leave any pending hide in place so a visible toast can't get stuck.
         guard let restingFrame = restingFrame(size: hostingView.fittingSize) else { return }
+
+        generation += 1
+        hideTask?.cancel()
 
         if !panel.isVisible {
             panel.setFrame(restingFrame.offsetBy(dx: 0, dy: -Self.slideDistance), display: false)

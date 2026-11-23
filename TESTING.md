@@ -10,7 +10,7 @@ Run `swift test` first, then check these in the built app.
 - [ ] Two folders show "2 folders copied"
 - [ ] Three files and two folders show "3 files and 2 folders copied"
 - [ ] One file and one folder show "1 file and 1 folder copied"
-- [ ] An app such as Calculator shows a toast
+- [ ] An app such as Calculator shows "File copied"
 
 ## Copy as Pathname with ⌥⌘C in Finder
 
@@ -24,7 +24,8 @@ Run `swift test` first, then check these in the built app.
 
 - [ ] Text selected while renaming a file
 - [ ] Copies made while another app is frontmost
-- [ ] Copies marked as concealed by a password manager
+- [ ] Copies marked as concealed or temporary by a password manager
+- [ ] Copies made in another app just before switching to Finder
 - [ ] Copies made while copyToast is paused, including after resuming
 
 ## Toast

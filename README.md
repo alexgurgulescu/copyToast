@@ -72,9 +72,9 @@ copyToast is designed to know as little as possible:
 
 - **No network access.** The App Sandbox is on without the network permission.
 - **No keyboard monitoring.** It reacts only to clipboard changes and needs no Accessibility or Input Monitoring permission.
-- **Minimal clipboard reading.** It inspects the clipboard only when it changes while Finder is the frontmost app. It counts items and never displays or keeps their contents.
+- **Minimal clipboard reading.** It inspects the clipboard only when it changes while Finder stays the frontmost app. macOS doesn't say which app made a copy, so a background app's copy can be counted too. It counts items and never displays or keeps their contents.
 - **No storage, logs, or analytics.**
-- **Skips sensitive copies.** Items that password managers mark as concealed are ignored.
+- **Skips sensitive copies.** Items that password managers and other apps mark as concealed or temporary are ignored.
 - **No third-party dependencies.**
 
 ## Support
