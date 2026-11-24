@@ -28,7 +28,7 @@
   </picture>
 </p>
 
-Finder gives no feedback when you press ⌘C. copyToast shows a small message such as **3 files copied**, then gets out of your way.
+Finder gives no feedback when you press ⌘C or ⌥⌘C. copyToast shows a small message such as "Path copied" or "3 files copied" and then gets out of your way.
 
 ## Install
 
